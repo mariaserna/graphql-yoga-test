@@ -31,7 +31,7 @@ const typeDefs = `
       #this mutation returns null
       hello(name: String!): Boolean
       createUser(name: String!, email: String!): User!
-      createUsers(users: [UserInput]!): [User]!
+      createUsers(users: [UserInput!]!): [User]!
   }
 `
 
@@ -79,7 +79,8 @@ const resolvers = {
         throw new Error('Email already exist!')
       }
 
-      const usersCreated = ctx.models.User.insertMany(users);
+      const usersCreated = await ctx.models.User.insertMany(users);
+
       return usersCreated;
     },
   },
