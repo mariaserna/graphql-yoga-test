@@ -13,6 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "babel-runtime": "^6.26.0",
     "dot-env": "0.0.1",
     "dotenv": "^8.0.0",
     "graphql-yoga": "^1.18.0",
