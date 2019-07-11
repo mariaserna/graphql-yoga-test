@@ -13,6 +13,10 @@ const models = {
 };
 
 const typeDefs = `
+  input UserInput {
+    name: String!
+    email: String!
+  }
   type User {
     id: ID!
     name: String!
@@ -27,6 +31,7 @@ const typeDefs = `
       #this mutation returns null
       hello(name: String!): Boolean
       createUser(name: String!, email: String!): User!
+      createUsers(users: [UserInput]!): [User]!
   }
 `
 
@@ -57,7 +62,26 @@ const resolvers = {
       const userCreated = await ctx.models.User.create(args);
 
       return userCreated;
-    }
+    },
+    createUsers: async (_, args, ctx) => {
+      
+      const { users } = args;
+      const allEmails = users.map(user => user.email);
+      const hasDuplicates = allEmails.some((val,i) => allEmails.indexOf(val) != i);
+      
+      if (hasDuplicates) {
+        throw new Error('Duplicates!')
+      }
+      
+      const emailExistOnDB = await ctx.models.User.exists({ email: {$in: allEmails } });
+
+      if (emailExistOnDB) {
+        throw new Error('Email already exist!')
+      }
+
+      const usersCreated = ctx.models.User.insertMany(users);
+      return usersCreated;
+    },
   },
   User: {
     id: (root) => {
