@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 import { GraphQLServer } from 'graphql-yoga';
 import mongoose from 'mongoose';
 import userModel from './user.model';
+import projectModel from './project.model';
 
 dotenv.config();
 
@@ -10,6 +11,7 @@ const DB_PASSWORD = process.env.DB_PASSWORD;
 
 const models = {
   User: userModel,
+  Project: projectModel,
 };
 
 const typeDefs = `
@@ -17,21 +19,36 @@ const typeDefs = `
     name: String!
     email: String!
   }
+  enum TeamEnum {
+    UI
+    QA
+    DESIGN
+    ADMIN
+  }
   type User {
     id: ID!
     name: String!
     email: String!
   }
+  type Project {
+    id: ID!
+    name: String!
+    description: String
+    team: TeamEnum!
+  }
   type Query {
     hello(name: String): String!
     user: User!
     users: [User]!
+    project: Project!
+    projects: [Project]!
   }
   type Mutation {
       #this mutation returns null
       hello(name: String!): Boolean
       createUser(name: String!, email: String!): User!
       createUsers(users: [UserInput!]!): [User]!
+      createProject(name: String!, description: String, team: TeamEnum!): Project!
   }
 `
 
@@ -48,9 +65,26 @@ const resolvers = {
 
       return users;
     },
+    projects: async (_, __, ctx) => {
+      const projects = await ctx.models.Project.find({});
+
+      return projects;
+    },
   },
   Mutation: {
     hello: (root, args, ctx) => true,
+    createProject: async (_, args, ctx) => {
+      console.log('project args', args)
+      const { name } = args;
+      const namedb = await ctx.models.Project.exists({ name });
+
+      if (namedb) {
+        throw new Error('This project name already exists')
+      }
+      const projectCreated = await ctx.models.Project.create(args);
+
+      return projectCreated;
+    },
     createUser: async (_, args, ctx) => {
       const { email } = args;
       const emaildb = await ctx.models.User.exists({ email })
@@ -67,7 +101,7 @@ const resolvers = {
       
       const { users } = args;
       const allEmails = users.map(user => user.email);
-      const hasDuplicates = allEmails.some((val,i) => allEmails.indexOf(val) != i);
+      const hasDuplicates = allEmails.some((val, i) => allEmails.indexOf(val) != i);
       
       if (hasDuplicates) {
         throw new Error('Duplicates!')
