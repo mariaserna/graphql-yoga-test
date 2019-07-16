@@ -19,4 +19,10 @@ export default {
         return projectCreated;
       },
     },
+    Project: {
+      id: (root) => {
+        console.log('RESOLVER ID')
+        return root._id;
+      }
+    }
 };
