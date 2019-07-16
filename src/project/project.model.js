@@ -15,7 +15,11 @@ const ProjectSchema = new mongoose.Schema({
             'DESIGN',
             'ADMIN',
         ],
-    }
+    },
+    users: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'User',
+    }]
 });
 
 export default mongoose.model('Project', ProjectSchema, 'projects');
