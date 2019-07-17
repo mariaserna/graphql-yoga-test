@@ -2,6 +2,11 @@ import path from 'path';
 import { fileLoader, mergeTypes, mergeResolvers } from 'merge-graphql-schemas';
 import userModel from './user/user.model';
 import projectModel from './project/project.model';
+import projectLoader from './project/project.loader';
+
+export const loaders = {
+    projects: projectLoader(),
+};
 
 export const models = {
     User: userModel,

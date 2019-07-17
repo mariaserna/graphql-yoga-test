@@ -47,6 +47,9 @@ export default {
     },
     User: {
       id: (root) => root._id,
-      projects: (root, _ , ctx) => ctx.models.Project.find({ users: {$in: root._id } }).populate('users'),
+      // projects: (root, _, ctx) => ctx.models.Project.find({ users: {$in: root._id }}).populate('users'),
+      projects: (root, _, ctx) => {
+        return ctx.loaders.projects.load(root._id);
+      },
     },
 };
