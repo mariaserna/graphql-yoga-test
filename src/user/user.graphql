@@ -6,6 +6,7 @@ type User {
   id: ID!
   name: String!
   email: String!
+  projects: [Project]!
 }
 type Query {
   user: User!

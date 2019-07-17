@@ -2,7 +2,7 @@ export default {
     Query: {
       projects: (_, __, ctx) => ctx.models.Project
         .find({})
-        .populate('users'),
+        .populate('users'), //busca la propiedad (cada id) dentro del modelo
     },
     Mutation: {
       createProject: async (_, args, ctx) => {
@@ -39,13 +39,16 @@ export default {
         // ];
         projectToAdd.users.push(userId);
 
-        return projectToAdd.save();
+        await projectToAdd.save(); //guarda en la db
+
+        return ctx.models.Project
+          .findOne({
+            _id: projectId,
+          })
+          .populate('users');
       }
     },
     Project: {
-      id: (root) => {
-        console.log('RESOLVER ID')
-        return root._id;
-      }
+      id: (root) => root._id,
     }
 };

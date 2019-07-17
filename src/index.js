@@ -2,9 +2,6 @@ import dotenv from 'dotenv';
 import { GraphQLServer } from 'graphql-yoga';
 import mongoose from 'mongoose';
 import { models, resolvers, typeDefs } from './graphql';
-console.log('models', models)
-console.log('typeDefs', typeDefs)
-console.log('resolvers', resolvers)
 
 // const types = [
 //   userTypeDefs,

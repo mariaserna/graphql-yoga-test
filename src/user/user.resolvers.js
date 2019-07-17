@@ -46,9 +46,7 @@ export default {
       },
     },
     User: {
-      id: (root) => {
-        console.log('RESOLVER ID')
-        return root._id;
-      }
-    }
+      id: (root) => root._id,
+      projects: (root, _ , ctx) => ctx.models.Project.find({ users: {$in: root._id } }).populate('users'),
+    },
 };
